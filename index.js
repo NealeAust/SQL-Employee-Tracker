@@ -56,16 +56,15 @@ function mainMenu() {
 };
 
 function displayDepartments() {
-    db.query("SELECT * FROM department", (error, results) => {
+    db.query("SELECT * FROM department", (err, results) => {
         if (err) throw err;
         console.table(results);
         mainMenu();
     });
 };
 
-
 function displayRoles() {
-    db.query("SELECT * FROM role", (error, results) => {
+    db.query("SELECT * FROM role", (err, results) => {
         if (err) throw err;
         console.table(results);
         mainMenu();
@@ -73,7 +72,7 @@ function displayRoles() {
 };
 
 function displayEmployees() {
-    db.query("SELECT * FROM role", (error, results) => {
+    db.query("SELECT * FROM employee", (err, results) => {
         if (err) throw err;
         console.table(results);
         mainMenu();
@@ -97,16 +96,36 @@ function addDepartment() {
     ])
         .then((answers) => {
             const sql = `INSERT INTO department (name) VALUES (?)`;
-            const paramas = [answers.name];
+            const params = [answers.name];
             db.query(sql, params, (err, results) => {
                 if (err) throw err;
-                console.log("Added " + answers.nameInput + " to departments!");
+
+                console.log("**************************************");
+                console.log("Added " + answers.name + " to departments!");
+                console.log("**************************************");
+
                 mainMenu()
             });
         });
 };
 
 function addRole() {
+    db.query("SELECT * FROM department", (err, results) => {
+        if (err) throw err;
+        // console.log(results);
+        const departmentChoices = results.map((department) => {
+            return {
+                name: department.name,
+                value: department.id,
+
+            }
+
+        });
+
+        console.log(departmentChoices)
+        
+    
+
     inquirer.prompt([
         {
             type: "input",
@@ -134,9 +153,10 @@ function addRole() {
             },
         },
         {
-            type: "input",
+            type: "list",
             name: "department_id",
             message: "Enter id of department.",
+            choices: departmentChoices,
             validate: idInput => {
                 if (idInput) {
                     return true;
@@ -147,23 +167,42 @@ function addRole() {
         },
     ])
         .then((answers) => {
-            const sql = "INSERT INTO role (role, salary, department_id) VALUES  (?,?,?)";
-            const params = [answers.role, answers.salary, department_id]
+            const sql = "INSERT INTO role (title, salary, department_id) VALUES  (?,?,?)";
+            const params = [answers.role, answers.salary, answers.department_id]
             db.query(sql, params, (err, results) => {
                 if (err) throw err;
                 console.log("Added " + answers.role + " to roles!");
                 mainMenu()
             });
         })
+    })  
 }
 
 function addEmployee() {
+    
+    db.query("SELECT * FROM role", (err, results) => {
+        if (err) throw err;
+        // console.log(results);
+        const roleChoices = results.map((role) => {
+            return {
+                name: role.title,
+                value: role.id,
+
+            } 
+
+        });
+        console.log(roleChoices)
+    
+    
+    
+    
+    
     inquirer.prompt([
         {
             type: "input",
             name: "first_name",
             message: "Enter the employee's first name",
-            validate: idInput => {
+            validate: nameInput => {
                 if (nameInput) {
                     return true;
                 } else {
@@ -186,9 +225,10 @@ function addEmployee() {
         },
 
         {
-            type: "input",
+            type: "list",
             name: "role_id",
-            message: "Enter the employee's role id",
+            message: "Select employee role",
+            choices: roleChoices,
             validate: (idInput) => {
                 if (idInput) {
                     return true;
@@ -223,7 +263,9 @@ function addEmployee() {
                 mainMenu();
             });
         });
-}
+    }) 
+    }
+
 
 function updateEmployeeRole() {
     inquirer.prompt([
@@ -254,14 +296,15 @@ function updateEmployeeRole() {
         },
     ])
         .then((answers) => {
-            const sql = "UPDATE employee SET role_id = ? WHERE employee_id = ?";
-            const params = [answers.role.id, answers.employee_id];
+            const sql = "UPDATE employee SET role_id = ? WHERE id = ?";
+            const params = [answers.role_id, answers.id];
 
             db.query(sql, params, (err, results) => {
                 if (err) throw err;
-                console.log("Role id update to" + answers.role_id)
+                console.log("Role id has been updated to    " + answers.role_id)
                 mainMenu();
             });
         });
-};
+}
 
+mainMenu();
