@@ -195,8 +195,8 @@ function addEmployee() {
                     console.log("No entry detected, please try again!");
                 }
             },
-        },   
-        
+        },
+
         {
             type: "input",
             name: "manager_id",
@@ -208,110 +208,61 @@ function addEmployee() {
                     console.log("No entry detected, please try again!");
                 }
             },
-        },  
-        
+        },
+
     ])
 
- .then((answers) => {
-    const sql = "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)";
-    const params =[answers.first_name, answers.last_name, answers.role_id, answers.manager_id];
+        .then((answers) => {
+            const sql = "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)";
+            const params = [answers.first_name, answers.last_name, answers.role_id, answers.manager_id];
 
-    db.query(sql, params, (err, results) => {
-        if (err) throw err;
-        console.log("Employee has been added")
-    mainMenu();
-    });   
-});  
+            db.query(sql, params, (err, results) => {
+                if (err) throw err;
+                console.log("Employee has been added")
+                mainMenu();
+            });
+        });
 }
 
 function updateEmployeeRole() {
-  inquirer.prompt ([
-    {
-    type: "input",
-    name: "employee_id",
-    message: "Enter the id of the employee",
-    validate: (idinput) => {
-        if (idinput) {
-            return true;
-        }else {
-            console.log ("No entry detected, please try again!")
-        }
-     },
-    },
-
-    {
-        type: "input",
-        name: "role_id",
-        message: "Enter the employees new role id",
-        validate: (idInput) => {
-            if (idInput) {
-                return true;
-            } else {
-                console.log("No entry detected, please try again!");
-            }
+    inquirer.prompt([
+        {
+            type: "input",
+            name: "employee_id",
+            message: "Enter the id of the employee",
+            validate: (idinput) => {
+                if (idinput) {
+                    return true;
+                } else {
+                    console.log("No entry detected, please try again!")
+                }
+            },
         },
-    },  
-])
-.then((answers) => {
-const sql = "UPDATE employee SET role_id = ? WHERE employee_id = ?";
-const params = [answers.role.id, answers.employee_id];
 
-db.query(sql, params, (err, results) => {
-  if (err) throw err;
-  console.log("Role id update to" + answers.role_id)
-  mainMenu();
+        {
+            type: "input",
+            name: "role_id",
+            message: "Enter the employees new role id",
+            validate: (idInput) => {
+                if (idInput) {
+                    return true;
+                } else {
+                    console.log("No entry detected, please try again!");
+                }
+            },
+        },
+    ])
+        .then((answers) => {
+            const sql = "UPDATE employee SET role_id = ? WHERE employee_id = ?";
+            const params = [answers.role.id, answers.employee_id];
 
+            db.query(sql, params, (err, results) => {
+                if (err) throw err;
+                console.log("Role id update to" + answers.role_id)
+                mainMenu();
+            });
 
+        });
 
-
-
-
-
-}
-
-
-
-
-
-
-
-)
-
-
-
-
-
-
-
-}
-
-
-
-
-
-
-
-
-
-)
-
-
-
-
-
-
-}  
-
-
-
-
-
-
-
-
-
-
-
-
-
+};
 
