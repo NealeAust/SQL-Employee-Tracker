@@ -1,4 +1,5 @@
-const mysql = require("mysql2");
+const db = require("./db/connection.sql");
+// const mysql = require("mysql2");
 const inquirer = require("inquirer");
 const consTable = require("console.table");
 
@@ -57,7 +58,7 @@ function mainMenu() {
 function displayDepartments() {
     db.query("SELECT * FROM department", (error, results) => {
         if (err) throw err;
-        console.log(results);
+        console.table(results);
         mainMenu();
     });
 };
@@ -261,8 +262,6 @@ function updateEmployeeRole() {
                 console.log("Role id update to" + answers.role_id)
                 mainMenu();
             });
-
         });
-
 };
 
