@@ -1,7 +1,7 @@
 const db = require("./db/connection.sql");
 // const mysql = require("mysql2");
 const inquirer = require("inquirer");
-const consTable = require("console.table");
+require("console.table");
 
 const employees = [];
 
