@@ -1,4 +1,4 @@
-const db = require("./db/connection.sql");
+const db = require("./connection.js");
 // const mysql = require("mysql2");
 const inquirer = require("inquirer");
 require("console.table");
@@ -200,7 +200,6 @@ function addEmployee() {
                 return {
                     name: employee.first_name + employee.last_name,
                     value: employee.manager_id,
-
                 }
             });
             console.log(managerChoices)
@@ -236,7 +235,7 @@ function addEmployee() {
 
                 {
                     type: "list",
-                    name: "role",
+                    name: "role_id",
                     message: "Select employee role",
                     choices: roleChoices,
                     validate: (idInput) => {
@@ -296,7 +295,7 @@ function updateEmployeeRole() {
         db.query("SELECT * FROM role", (err, results) => {
             if (err) throw err;
             // console.log(results);
-            const roleChoices = results.map((role) => {
+            const updateRoleChoices = results.map((role) => {
                 return {
                     name: role.title,
                     value: role.id,
@@ -304,7 +303,7 @@ function updateEmployeeRole() {
                 }
             });
 
-            console.log(roleChoices)
+            console.log(updateRoleChoices)
 
 
             inquirer.prompt([
@@ -324,9 +323,9 @@ function updateEmployeeRole() {
 
                 {
                     type: "list",
-                    name: "role",
+                    name: "role_id",
                     message: "Enter the employees new role id",
-                    choices: roleChoices,
+                    choices: updateRoleChoices,
                     validate: (idInput) => {
                         if (idInput) {
                             return true;
