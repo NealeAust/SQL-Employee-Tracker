@@ -1,3 +1,5 @@
+// Middleware required to run application
+
 const mysql = require("mysql2");
 
 const db = mysql.createConnection(

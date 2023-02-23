@@ -1,9 +1,12 @@
+-- Defines how data is organized within the relational database
+
+-- Database critical to application
 DROP DATABASE IF EXISTS employee_db;
 CREATE DATABASE employee_db;
 
 USE employee_db;
 
-
+-- Database stores data in the following tables
 CREATE TABLE department (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(30) NOT NULL  

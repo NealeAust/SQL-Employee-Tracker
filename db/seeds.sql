@@ -1,3 +1,5 @@
+-- Initial set of data added/populated within database 
+
 INSERT INTO department (name)
 VALUES
 ("Engineering"),

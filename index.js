@@ -1,10 +1,21 @@
-const db = require("./connection.js");
-// const mysql = require("mysql2");
+// Imported packages needed for this application
 const inquirer = require("inquirer");
 require("console.table");
 
+// Connection code held in a separate file
+const db = require("./connection.js");
+
+// Created empty array to store user input
 const employees = [];
 
+console.log("**************************************")
+console.log("*                                    *")
+console.log("*        EMPLOYEE MANAGER            *")
+console.log("*                                    *")
+console.log("**************************************")
+
+
+// Main menu displays list for user to select function to perform
 function mainMenu() {
     inquirer.prompt([
         {
@@ -24,7 +35,6 @@ function mainMenu() {
     ])
 
         .then((answers) => {
-            console.log(answers);
             if (answers.choiceSelect === "View all departments") {
                 displayDepartments();
             }
@@ -62,7 +72,7 @@ function displayDepartments() {
         mainMenu();
     });
 };
-
+// functions to display information in tables as requested
 function displayRoles() {
     db.query("SELECT * FROM role", (err, results) => {
         if (err) throw err;
@@ -79,6 +89,8 @@ function displayEmployees() {
     });
 };
 
+// Require user reponding to questions 
+// Validates performed & returns error message if no entry detected
 function addDepartment() {
     inquirer.prompt([
         {
@@ -109,30 +121,28 @@ function addDepartment() {
         });
 };
 
+// Following functions require user to select from a choice list
+// Include prompts for department, roles and employee names
 function addRole() {
     db.query("SELECT * FROM department", (err, results) => {
         if (err) throw err;
-        // console.log(results);
+
         const departmentChoices = results.map((department) => {
             return {
                 name: department.name,
                 value: department.id,
-
             }
-
         });
 
         console.log(departmentChoices)
-
-
 
         inquirer.prompt([
             {
                 type: "input",
                 name: "role",
                 message: "What is the title of the new role?",
-                validate: roleInput => {
-                    if (roleInput) {
+                validate: roleSelect => {
+                    if (roleSelect) {
                         return true;
                     } else {
                         return console.log("No entry detected, please try again!");
@@ -140,6 +150,7 @@ function addRole() {
                 },
             },
 
+            // Role information includes salary
             {
                 type: "input",
                 name: "salary",
@@ -171,7 +182,11 @@ function addRole() {
                 const params = [answers.role, answers.salary, answers.department_id]
                 db.query(sql, params, (err, results) => {
                     if (err) throw err;
+
+                    console.log("**************************************");
                     console.log("Added " + answers.role + " to roles!");
+                    console.log("**************************************");
+
                     mainMenu()
                 });
             })
@@ -182,20 +197,16 @@ function addEmployee() {
 
     db.query("SELECT * FROM role", (err, results) => {
         if (err) throw err;
-        // console.log(results);
         const roleChoices = results.map((role) => {
             return {
                 name: role.title,
                 value: role.id,
-
             }
         });
-
         console.log(roleChoices)
 
         db.query("SELECT * FROM employee", (err, results) => {
             if (err) throw err;
-            // console.log(results);
             const managerChoices = results.map((employee) => {
                 return {
                     name: employee.first_name + employee.last_name,
@@ -204,13 +215,11 @@ function addEmployee() {
             });
             console.log(managerChoices)
 
-
-
             inquirer.prompt([
                 {
                     type: "input",
                     name: "first_name",
-                    message: "Enter the employee's first name",
+                    message: "Enter the employee's first name.",
                     validate: nameInput => {
                         if (nameInput) {
                             return true;
@@ -223,7 +232,7 @@ function addEmployee() {
                 {
                     type: "input",
                     name: "last_name",
-                    message: "Enter the employee's last name?",
+                    message: "Enter the employee's last name.",
                     validate: (nameInput) => {
                         if (nameInput) {
                             return true;
@@ -236,7 +245,7 @@ function addEmployee() {
                 {
                     type: "list",
                     name: "role_id",
-                    message: "Select employee role",
+                    message: "Select employees role.",
                     choices: roleChoices,
                     validate: (idInput) => {
                         if (idInput) {
@@ -250,7 +259,7 @@ function addEmployee() {
                 {
                     type: "list",
                     name: "manager_id",
-                    message: "Enter the manager's id",
+                    message: "Select employees manager.",
                     choices: managerChoices,
                     validate: (idInput) => {
                         if (idInput) {
@@ -269,14 +278,17 @@ function addEmployee() {
 
                     db.query(sql, params, (err, results) => {
                         if (err) throw err;
-                        console.log("Employee has been added")
+
+                        console.log("**************************************");
+                        console.log("Employee " + answers.first_name + answers.last_name + " has been added!")
+                        console.log("**************************************");
+
                         mainMenu();
                     });
                 });
         })
     })
 }
-
 
 function updateEmployeeRole() {
 
@@ -294,7 +306,6 @@ function updateEmployeeRole() {
 
         db.query("SELECT * FROM role", (err, results) => {
             if (err) throw err;
-            // console.log(results);
             const updateRoleChoices = results.map((role) => {
                 return {
                     name: role.title,
@@ -302,15 +313,13 @@ function updateEmployeeRole() {
 
                 }
             });
-
             console.log(updateRoleChoices)
-
 
             inquirer.prompt([
                 {
                     type: "list",
                     name: "employee_id",
-                    message: "Enter the id of the employee",
+                    message: "Select employee.",
                     choices: employeeChoices,
                     validate: (idinput) => {
                         if (idinput) {
@@ -324,7 +333,7 @@ function updateEmployeeRole() {
                 {
                     type: "list",
                     name: "role_id",
-                    message: "Enter the employees new role id",
+                    message: "Select role.",
                     choices: updateRoleChoices,
                     validate: (idInput) => {
                         if (idInput) {
@@ -341,7 +350,11 @@ function updateEmployeeRole() {
 
                     db.query(sql, params, (err, results) => {
                         if (err) throw err;
-                        console.log("Role id has been updated to    " + answers.role_id)
+
+                        console.log("**************************");
+                        console.log("* Role has been updated! *");
+                        console.log("**************************");
+
                         mainMenu();
                     });
                 });
