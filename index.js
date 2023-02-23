@@ -123,63 +123,63 @@ function addRole() {
         });
 
         console.log(departmentChoices)
-        
-    
 
-    inquirer.prompt([
-        {
-            type: "input",
-            name: "role",
-            message: "What is the title of the new role?",
-            validate: roleInput => {
-                if (roleInput) {
-                    return true;
-                } else {
-                    return console.log("No entry detected, please try again!");
-                }
-            },
-        },
 
-        {
-            type: "input",
-            name: "salary",
-            message: "Enter the annual salary for the role.",
-            validate: salaryInput => {
-                if (salaryInput) {
-                    return true;
-                } else {
-                    return console.log("No entry detected, please try again!");
-                }
+
+        inquirer.prompt([
+            {
+                type: "input",
+                name: "role",
+                message: "What is the title of the new role?",
+                validate: roleInput => {
+                    if (roleInput) {
+                        return true;
+                    } else {
+                        return console.log("No entry detected, please try again!");
+                    }
+                },
             },
-        },
-        {
-            type: "list",
-            name: "department_id",
-            message: "Enter id of department.",
-            choices: departmentChoices,
-            validate: idInput => {
-                if (idInput) {
-                    return true;
-                } else {
-                    return console.log("No entry detected, please try again!");
-                }
+
+            {
+                type: "input",
+                name: "salary",
+                message: "Enter the annual salary for the role.",
+                validate: salaryInput => {
+                    if (salaryInput) {
+                        return true;
+                    } else {
+                        return console.log("No entry detected, please try again!");
+                    }
+                },
             },
-        },
-    ])
-        .then((answers) => {
-            const sql = "INSERT INTO role (title, salary, department_id) VALUES  (?,?,?)";
-            const params = [answers.role, answers.salary, answers.department_id]
-            db.query(sql, params, (err, results) => {
-                if (err) throw err;
-                console.log("Added " + answers.role + " to roles!");
-                mainMenu()
-            });
-        })
-    })  
+            {
+                type: "list",
+                name: "department_id",
+                message: "Select department.",
+                choices: departmentChoices,
+                validate: idInput => {
+                    if (idInput) {
+                        return true;
+                    } else {
+                        return console.log("No entry detected, please try again!");
+                    }
+                },
+            },
+        ])
+            .then((answers) => {
+                const sql = "INSERT INTO role (title, salary, department_id) VALUES  (?,?,?)";
+                const params = [answers.role, answers.salary, answers.department_id]
+                db.query(sql, params, (err, results) => {
+                    if (err) throw err;
+                    console.log("Added " + answers.role + " to roles!");
+                    mainMenu()
+                });
+            })
+    })
 }
 
 function addEmployee() {
-    
+
     db.query("SELECT * FROM role", (err, results) => {
         if (err) throw err;
         // console.log(results);
@@ -188,123 +188,167 @@ function addEmployee() {
                 name: role.title,
                 value: role.id,
 
-            } 
-
+            }
         });
+
         console.log(roleChoices)
-    
-    
-    
-    
-    
-    inquirer.prompt([
-        {
-            type: "input",
-            name: "first_name",
-            message: "Enter the employee's first name",
-            validate: nameInput => {
-                if (nameInput) {
-                    return true;
-                } else {
-                    return console.log("No entry detected, please try again!");
+
+        db.query("SELECT * FROM employee", (err, results) => {
+            if (err) throw err;
+            // console.log(results);
+            const managerChoices = results.map((employee) => {
+                return {
+                    name: employee.first_name + employee.last_name,
+                    value: employee.manager_id,
+
                 }
-            },
-        },
-
-        {
-            type: "input",
-            name: "last_name",
-            message: "Enter the employee's last name?",
-            validate: (nameInput) => {
-                if (nameInput) {
-                    return true;
-                } else {
-                    console.log("No entry detected, please try again!");
-                }
-            },
-        },
-
-        {
-            type: "list",
-            name: "role_id",
-            message: "Select employee role",
-            choices: roleChoices,
-            validate: (idInput) => {
-                if (idInput) {
-                    return true;
-                } else {
-                    console.log("No entry detected, please try again!");
-                }
-            },
-        },
-
-        {
-            type: "input",
-            name: "manager_id",
-            message: "Enter the manager's id",
-            validate: (idInput) => {
-                if (idInput) {
-                    return true;
-                } else {
-                    console.log("No entry detected, please try again!");
-                }
-            },
-        },
-
-    ])
-
-        .then((answers) => {
-            const sql = "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)";
-            const params = [answers.first_name, answers.last_name, answers.role_id, answers.manager_id];
-
-            db.query(sql, params, (err, results) => {
-                if (err) throw err;
-                console.log("Employee has been added")
-                mainMenu();
             });
-        });
-    }) 
-    }
+            console.log(managerChoices)
+
+
+
+            inquirer.prompt([
+                {
+                    type: "input",
+                    name: "first_name",
+                    message: "Enter the employee's first name",
+                    validate: nameInput => {
+                        if (nameInput) {
+                            return true;
+                        } else {
+                            return console.log("No entry detected, please try again!");
+                        }
+                    },
+                },
+
+                {
+                    type: "input",
+                    name: "last_name",
+                    message: "Enter the employee's last name?",
+                    validate: (nameInput) => {
+                        if (nameInput) {
+                            return true;
+                        } else {
+                            console.log("No entry detected, please try again!");
+                        }
+                    },
+                },
+
+                {
+                    type: "list",
+                    name: "role",
+                    message: "Select employee role",
+                    choices: roleChoices,
+                    validate: (idInput) => {
+                        if (idInput) {
+                            return true;
+                        } else {
+                            console.log("No entry detected, please try again!");
+                        }
+                    },
+                },
+
+                {
+                    type: "list",
+                    name: "manager_id",
+                    message: "Enter the manager's id",
+                    choices: managerChoices,
+                    validate: (idInput) => {
+                        if (idInput) {
+                            return true;
+                        } else {
+                            console.log("No entry detected, please try again!");
+                        }
+                    },
+                },
+
+            ])
+
+                .then((answers) => {
+                    const sql = "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)";
+                    const params = [answers.first_name, answers.last_name, answers.role_id, answers.manager_id];
+
+                    db.query(sql, params, (err, results) => {
+                        if (err) throw err;
+                        console.log("Employee has been added")
+                        mainMenu();
+                    });
+                });
+        })
+    })
+}
 
 
 function updateEmployeeRole() {
-    inquirer.prompt([
-        {
-            type: "input",
-            name: "employee_id",
-            message: "Enter the id of the employee",
-            validate: (idinput) => {
-                if (idinput) {
-                    return true;
-                } else {
-                    console.log("No entry detected, please try again!")
-                }
-            },
-        },
 
-        {
-            type: "input",
-            name: "role_id",
-            message: "Enter the employees new role id",
-            validate: (idInput) => {
-                if (idInput) {
-                    return true;
-                } else {
-                    console.log("No entry detected, please try again!");
-                }
-            },
-        },
-    ])
-        .then((answers) => {
-            const sql = "UPDATE employee SET role_id = ? WHERE id = ?";
-            const params = [answers.role_id, answers.id];
+    db.query("SELECT * FROM employee", (err, results) => {
+        if (err) throw err;
+        // console.log(results);
+        const employeeChoices = results.map((employee) => {
+            return {
+                name: employee.first_name + employee.last_name,
+                value: employee.id,
 
-            db.query(sql, params, (err, results) => {
-                if (err) throw err;
-                console.log("Role id has been updated to    " + answers.role_id)
-                mainMenu();
-            });
+            }
         });
+        console.log(employeeChoices)
+
+        db.query("SELECT * FROM role", (err, results) => {
+            if (err) throw err;
+            // console.log(results);
+            const roleChoices = results.map((role) => {
+                return {
+                    name: role.title,
+                    value: role.id,
+
+                }
+            });
+
+            console.log(roleChoices)
+
+
+            inquirer.prompt([
+                {
+                    type: "list",
+                    name: "employee_id",
+                    message: "Enter the id of the employee",
+                    choices: employeeChoices,
+                    validate: (idinput) => {
+                        if (idinput) {
+                            return true;
+                        } else {
+                            console.log("No entry detected, please try again!")
+                        }
+                    },
+                },
+
+                {
+                    type: "list",
+                    name: "role",
+                    message: "Enter the employees new role id",
+                    choices: roleChoices,
+                    validate: (idInput) => {
+                        if (idInput) {
+                            return true;
+                        } else {
+                            console.log("No entry detected, please try again!");
+                        }
+                    },
+                },
+            ])
+                .then((answers) => {
+                    const sql = "UPDATE employee SET role_id = ? WHERE id = ?";
+                    const params = [answers.role_id, answers.id];
+
+                    db.query(sql, params, (err, results) => {
+                        if (err) throw err;
+                        console.log("Role id has been updated to    " + answers.role_id)
+                        mainMenu();
+                    });
+                });
+
+        })
+    })
 }
 
 mainMenu();
