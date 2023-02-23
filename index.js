@@ -336,8 +336,8 @@ function updateEmployeeRole() {
                 },
             ])
                 .then((answers) => {
-                    const sql = "UPDATE employee SET role_id = ? WHERE id = ?";
-                    const params = [answers.role_id, answers.id];
+                    const sql = "UPDATE employee SET role_id = ? WHERE .id = ?";
+                    const params = [answers.role_id, answers.employee_id];
 
                     db.query(sql, params, (err, results) => {
                         if (err) throw err;
